@@ -76,6 +76,43 @@ tr.tot td{font-weight:750;border-bottom:none}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:10px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .legend b{color:var(--ink);font-family:var(--mono);font-weight:500;margin-left:4px}
+.reaj-box{border-top:1px solid var(--line);padding-top:18px;display:grid;gap:12px}
+.reaj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px;font-size:14px}
+.reaj-head b{font-family:var(--mono);font-size:16px;color:var(--accent)}
+input[type="range"]{padding:0;height:8px;border-radius:999px;accent-color:var(--accent);cursor:pointer}
+.reaj-btns{display:flex;flex-wrap:wrap;gap:6px}
+.reaj-btns button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:7px;padding:6px 10px;cursor:pointer}
+.reaj-btns button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:650}
+.reaj-params{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.reaj-params{grid-template-columns:minmax(0,1fr)}}
+.reaj-bars{display:grid;gap:9px;margin-top:2px}
+.rbar-row{display:grid;gap:4px}
+.rbar-top{display:flex;justify-content:space-between;gap:8px;font-size:13.5px}
+.rbar-top b{font-family:var(--mono);font-weight:500;white-space:nowrap}
+.rbar-track{height:12px;border-radius:5px;background:var(--bg);overflow:hidden}
+.rbar-fill{height:100%;border-radius:5px;transition:width .15s ease}
+.verdict{border-radius:10px;padding:12px 14px;font-size:14.5px;line-height:1.45;border-left:4px solid var(--accent);background:var(--accent-soft)}
+.verdict.loss{border-left-color:var(--loss);background:var(--loss-soft)}
+.verdict.gain{border-left-color:var(--c3);background:color-mix(in srgb,var(--c3) 13%,var(--surface))}
+.verdict.even{border-left-color:var(--c4);background:color-mix(in srgb,var(--c4) 15%,var(--surface))}
+.reaj-note{font-size:13.5px;color:var(--muted);margin:0;line-height:1.45}
+.reaj-note strong{color:var(--ink);font-weight:650}
+.reaj-note b{color:var(--ink);font-family:var(--mono);font-weight:500}
+.presets{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:2px}
+.presets span{font-size:12.5px;color:var(--muted)}
+.presets button{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:3px 9px;cursor:pointer}
+.presets button:hover{border-color:var(--accent);color:var(--accent)}
+.pocket-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.pocket-grid{grid-template-columns:minmax(0,1fr)}}
+.pocket{background:var(--bg);border-radius:9px;padding:10px 12px;display:grid;gap:2px}
+.pocket .k{font-size:12px;color:var(--muted)}
+.pocket .v{font-family:var(--mono);font-size:16px;font-weight:500;font-variant-numeric:tabular-nums}
+.pocket.neg .v{color:var(--loss)}
+.pocket.pos .v{color:var(--c3)}
+.pedag{border-top:1px dashed var(--line);padding-top:10px;margin-top:2px}
+.pedag summary{font-size:13.5px;color:var(--accent);font-weight:650}
+.pedag ul{margin:8px 0 0;padding-left:0;list-style:none;font-size:13.5px;color:var(--ink);display:grid;gap:7px;line-height:1.45}
+.pedag b{font-family:var(--mono);font-weight:500}
 .notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
 @media (max-width:820px){.notes{grid-template-columns:minmax(0,1fr)}}
 .notes h3{font-family:var(--display);font-size:22px;margin:0 0 6px;font-weight:650}
@@ -103,6 +140,12 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <div class="field">
         <label for="sal">Salario mensual (antes de descuentos)</label>
         <div class="money"><span>$</span><input id="sal" inputmode="numeric" autocomplete="off" value="9.500.000"></div>
+        <div class="presets" aria-label="Perfiles de referencia">
+          <span>Perfiles de referencia:</span>
+          <button type="button" data-sal="5500000">Auxiliar ($5,5 M)</button>
+          <button type="button" data-sal="9500000">Asociado ($9,5 M)</button>
+          <button type="button" data-sal="15000000">Titular ($15 M)</button>
+        </div>
       </div>
       <div class="field">
         <span class="lbl" id="gr-l">&#191;Su universidad le certifica hoy gastos de representaci&#243;n?</span>
@@ -120,10 +163,12 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <div class="field">
         <label for="dep">Personas a cargo (dependientes)</label>
         <select id="dep"><option value="0" selected>Ninguna</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4 o m&#225;s</option></select>
+        <p class="hint">Hijos menores de 18 (o hasta 23 si estudian), c&#243;nyuge, padres o hermanos bajo dependencia econ&#243;mica. El PL 477 elimina la deducci&#243;n extra de 72 UVT por dependiente.</p>
       </div>
       <div class="field">
         <label for="reg">Afiliaci&#243;n en salud</label>
         <select id="reg"><option value="eps" selected>EPS</option><option value="esp">Sistema propio de la universidad (r&#233;gimen especial)</option></select>
+        <p class="hint">En EPS el aporte sube del 4 % a una escala del 4 % al 8 %. En los sistemas propios universitarios (Ley 647, p. ej. Unisalud) sube al 5,5 % o 6,5 %.</p>
       </div>
       <details>
         <summary>Supuestos avanzados</summary>
@@ -165,6 +210,57 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
         <tbody id="o-tab"></tbody>
       </table></div>
     </div>
+    <div class="reaj-box" id="o-reaj-box">
+      <div>
+        <h2>&#191;Alcanza el reajuste salarial de 2027 para cubrir la reforma?</h2>
+        <p class="hint">Simule qu&#233; ocurre si en 2027 su salario sube por el reajuste anual (por ejemplo, el IPC), pero al mismo tiempo entra a regir el PL 477 sobre todo su sueldo. La inflaci&#243;n y el reajuste del salario m&#237;nimo son <b>supuestos suyos, no pron&#243;sticos</b>.</p>
+      </div>
+      <div class="field">
+        <div class="reaj-head">
+          <label for="reaj">Supuesto de reajuste salarial en 2027: <b id="o-reaj-lbl">5,0 %</b></label>
+          <span class="hint" id="o-reaj-sal"></span>
+        </div>
+        <input id="reaj" type="range" min="0" max="25" step="0.1" value="5.0">
+        <div class="reaj-btns" role="group" aria-label="Atajos de reajuste salarial">
+          <button type="button" data-reaj="0">0 % (sin reajuste)</button>
+          <button type="button" data-reaj="5" aria-pressed="true">5,0 %</button>
+          <button type="button" data-reaj="7">7,0 %</button>
+          <button type="button" data-reaj="emp" id="btn-emp">Punto de empate</button>
+        </div>
+        <div class="reaj-params">
+          <div class="field">
+            <label for="ipc">Inflaci&#243;n supuesta para 2027 (%)</label>
+            <input id="ipc" type="number" min="0" max="30" step="0.1" value="5.0" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="smg">Reajuste supuesto del salario m&#237;nimo 2027 (%)</label>
+            <input id="smg" type="number" min="0" max="30" step="0.1" value="5.0" inputmode="decimal">
+            <p class="hint">Mueve los tramos de salud: con un m&#237;nimo m&#225;s alto, el mismo sueldo cae en un tramo m&#225;s bajo.</p>
+          </div>
+        </div>
+      </div>
+      <div class="reaj-bars">
+        <div class="rbar-row">
+          <div class="rbar-top"><span>Lo que le suma el reajuste al a&#241;o (neto de pensi&#243;n)</span><b id="o-rbar-gain">&#8212;</b></div>
+          <div class="rbar-track"><div class="rbar-fill" id="o-rfill-gain" style="width:0%;background:var(--c3)"></div></div>
+        </div>
+        <div class="rbar-row">
+          <div class="rbar-top"><span>Lo que le cobran de m&#225;s la renta y la salud con el PL 477</span><b id="o-rbar-tax">&#8212;</b></div>
+          <div class="rbar-track"><div class="rbar-fill" id="o-rfill-tax" style="width:0%;background:var(--loss)"></div></div>
+        </div>
+      </div>
+      <div class="verdict" id="o-reaj-verdict"></div>
+      <div class="pocket-grid" aria-label="Ingreso libre antes y despu&#233;s">
+        <div class="pocket"><span class="k">Ingreso libre anual hoy</span><span class="v" id="o-pk-hoy">&#8212;</span><span class="k" id="o-pk-hoy-s">despu&#233;s de salud, pensi&#243;n y renta</span></div>
+        <div class="pocket"><span class="k">Ingreso libre anual en 2027</span><span class="v" id="o-pk-2027">&#8212;</span><span class="k" id="o-pk-2027-s">con reajuste y PL 477</span></div>
+        <div class="pocket" id="o-pk-box"><span class="k">Cambio en su bolsillo al mes</span><span class="v" id="o-pk-dif">&#8212;</span><span class="k" id="o-pk-dif-s">frente a hoy</span></div>
+      </div>
+      <p class="reaj-note" id="o-reaj-note"></p>
+      <details class="pedag">
+        <summary>&#191;C&#243;mo se explica este resultado paso a paso?</summary>
+        <ul id="o-reaj-steps"></ul>
+      </details>
+    </div>
   </section>
 </div>
 
@@ -177,12 +273,14 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <li><b>PL 477:</b> se deroga esa exenci&#243;n (art. 106). Renta exenta del 25 % con tope de 630 UVT, l&#237;mite de 1.180 UVT, sin las 72 UVT por dependiente y una nueva tabla con un tramo del 9 % entre 720 y 1.090 UVT (arts. 47&#8211;49).</li>
       <li><b>Salud:</b> hoy el aporte es del 4 %. Con el proyecto va del 4 % al 8 % seg&#250;n los salarios m&#237;nimos en EPS (art. 21). En los sistemas propios sube 1,5 puntos entre 2 y 3 salarios m&#237;nimos y 2,5 puntos por encima.</li>
       <li><b>Descomposici&#243;n vs. tabla:</b> en la barra &#171;De d&#243;nde viene el aumento&#187; el aporte a salud se muestra <i>neto</i> (descontando el menor impuesto de renta que genera al reducir la base gravable); en la tabla &#171;Comparaci&#243;n anual&#187; cada fila muestra su cambio bruto. La suma total es id&#233;ntica.</li>
+      <li><b>&#191;Por qu&#233; un reajuste salarial puede no alcanzar?</b> Porque en el a&#241;o de transici&#243;n (2026 &#8594; 2027) ocurren dos cosas a la vez: su salario sube un porcentaje, pero las nuevas reglas del PL 477 (fin de la exenci&#243;n del 50 %, nueva tabla y mayor aporte a salud) se aplican sobre <i>todo</i> el salario que usted ya tra&#237;a, creando un escal&#243;n fijo que puede superar el aumento del a&#241;o.</li>
       <li>La deducci&#243;n por dependientes del 10 % (hasta 32 UVT al mes, art. 387 ET) se mantiene en ambos escenarios; lo que desaparece son las 72 UVT adicionales por dependiente (art. 336 ET).</li>
     </ul>
   </div>
   <div>
     <h3>L&#237;mites</h3>
     <p>Es una estimaci&#243;n ilustrativa, con un margen razonable de &#177;20 %. No incluye intereses de vivienda, medicina prepagada, aportes voluntarios, otras rentas ni bonificaciones especiales, que pueden bajar o subir su cifra. Tampoco incluye el mayor costo de vida por el IVA.</p>
+    <p>La secci&#243;n del reajuste de 2027 usa supuestos suyos de inflaci&#243;n y de salario m&#237;nimo (por defecto 5 %, ilustrativos, no pron&#243;sticos) y mantiene la UVT 2027 en ambos escenarios. El aporte a salud sube por tramos de salarios m&#237;nimos y se aplica a todo el sueldo: cerca de un cambio de tramo el ingreso libre puede caer de golpe y el punto de empate se calcula como el <i>menor</i> reajuste que recupera el nivel de hoy.</p>
     <p>El proyecto puede cambiar en el Congreso. No es asesor&#237;a tributaria; para su caso concreto consulte a un contador.</p>
     <p>Fuentes: <a href="https://www.camara.gov.co/ley-rescate-economico/" target="_blank" rel="noopener">ficha del PL 477/2026 en la C&#225;mara</a> y <a href="https://www.camara.gov.co/wp-content/uploads/2026/10/proyectos-ley/documentos/proyecto-36548/PROYECTO-DE-LEY-Rescate-Economico-2026-VSD-RADICADA-1.pdf" target="_blank" rel="noopener">texto radicado</a>; Estatuto Tributario, arts. 206, 241, 336 y 387.</p>
   </div>
@@ -204,7 +302,9 @@ function calc(p, f){ // f: {gr, tabla, topes, salud} true = regla del PL
   const {m, n, uvt, sm, grPct, dep, reg} = p;
   const I = n*m, meses = Math.min(n, 12.5);
   const s = f.salud ? saludPL(m, reg, sm) : .04;
-  const aportes = (s + .04 + fsp(m, sm)) * m * meses;
+  const pen = (.04 + fsp(m, sm)) * m * meses;
+  const sal = s * m * meses;
+  const aportes = sal + pen;
   const base = I - aportes;
   const G = f.gr ? 0 : Math.min(grPct/100 * m * 12, base);
   const depded = dep>0 ? Math.min(.10*I, 384*uvt) : 0;
@@ -214,7 +314,7 @@ function calc(p, f){ // f: {gr, tabla, topes, salud} true = regla del PL
   const extra = f.topes ? 0 : 72*uvt*Math.min(dep,4);
   const tg = Math.max(base - G - tot - extra, 0) / uvt;
   const imp = (f.tabla ? tablaPL(tg) : tablaActual(tg)) * uvt;
-  return { ingreso:I, renta:imp, salud:s*m*meses, tasaSalud:s };
+  return { ingreso:I, renta:imp, salud:sal, pen, disp:I-aportes-imp, tasaSalud:s };
 }
 function simular(p){
   const s0 = calc(p,{gr:false,tabla:false,topes:false,salud:false});
@@ -226,13 +326,29 @@ function simular(p){
   const total = (s4.renta+s4.salud) - (s0.renta+s0.salud);
   return { hoy:s0, pl:s4, comp, total, mensual: total/12, pct: total/12/p.m, meses: total/p.m };
 }
+/* Menor reajuste g (hasta 60 %) tal que el ingreso libre con el PL 477 y el salario mínimo reajustado
+   en smg alcance "target". Devuelve 0.6 si no se alcanza (se muestra como "más de 60 %"). */
+function buscarObjetivo(p, target, smg){
+  const f = g => calc({...p, m:p.m*(1+g), sm:p.sm*(1+smg)},{gr:true,tabla:true,topes:true,salud:true}).disp;
+  if(f(0) >= target) return 0;
+  let prev = 0;
+  for(let g=0.0005; g<=0.6; g+=0.0005){
+    if(f(g) >= target){
+      let lo=prev, hi=g;
+      for(let i=0;i<30;i++){ const mid=(lo+hi)/2; if(f(mid) < target) lo=mid; else hi=mid; }
+      return hi;
+    }
+    prev = g;
+  }
+  return 0.6;
+}
 /* ===== Interfaz ===== */
 const $ = id => document.getElementById(id);
 const COP = v => "$" + Math.round(v).toLocaleString("es-CO");
-const COPm = v => Math.abs(v)>=1e6 ? "$" + (v/1e6).toLocaleString("es-CO",{maximumFractionDigits:1}) + " M" : COP(v);
-const pct = v => (v*100).toLocaleString("es-CO",{maximumFractionDigits:1}) + " %";
+const COPm = v => Math.abs(v)>=1e6 ? "$" + (v/1e6).toLocaleString("es-CO",{minimumFractionDigits:1,maximumFractionDigits:1}) + " M" : COP(v);
+const pct = v => (v*100).toLocaleString("es-CO",{minimumFractionDigits:1,maximumFractionDigits:1}) + " %";
 const num = s => Number(String(s).replace(/[^\d]/g,"")) || 0;
-let grMode = "50";
+let grMode = "50", reajExact = null, lastEmp = 0.05;
 function fmtInput(el){ const v=num(el.value); el.value = v ? v.toLocaleString("es-CO") : ""; }
 function leer(){
   const grPct = grMode==="otro" ? Math.max(0, Math.min(50, Number($("grp").value)||0)) : Number(grMode);
@@ -242,7 +358,8 @@ function leer(){
 const COMP = [["exencion","Fin de la exenci\u00f3n de gastos de representaci\u00f3n","--c1"],["tabla","Nueva tabla de renta (tramo del 9 %)","--c2"],["topes","Topes m\u00e1s bajos y fin de las 72 UVT por dependiente","--c3"],["salud","Mayor aporte a salud (neto de renta)","--c4"]];
 function render(){
   const p = leer();
-  if(p.m < 500000){ $("o-anual").textContent="\u2014"; $("o-mes").textContent="\u2014"; $("o-pct").textContent="\u2014"; $("o-meses").textContent=""; $("o-frase").textContent="Escriba su salario mensual para ver el resultado."; $("o-tab").innerHTML=""; $("o-stack").innerHTML=""; $("o-leg").innerHTML=""; return; }
+  if(p.m < 500000){ $("o-anual").textContent="\u2014"; $("o-mes").textContent="\u2014"; $("o-pct").textContent="\u2014"; $("o-meses").textContent=""; $("o-frase").textContent="Escriba su salario mensual para ver el resultado."; $("o-tab").innerHTML=""; $("o-stack").innerHTML=""; $("o-leg").innerHTML=""; $("o-reaj-box").hidden=true; return; }
+  $("o-reaj-box").hidden=false;
   const r = simular(p);
   $("o-anual").textContent = COPm(r.total);
   $("o-meses").textContent = "\u2248 " + r.meses.toLocaleString("es-CO",{minimumFractionDigits:1,maximumFractionDigits:1}) + " salarios mensuales";
@@ -255,11 +372,73 @@ function render(){
   const rows = [["Impuesto de renta",r.hoy.renta,r.pl.renta],[`Aporte a salud bruto (${pct(.04)} \u2192 ${pct(r.pl.tasaSalud)})`,r.hoy.salud,r.pl.salud]];
   $("o-tab").innerHTML = rows.map(([t,a,b])=>`<tr><td>${t}</td><td class="num">${COP(a)}</td><td class="num">${COP(b)}</td><td class="num">${COP(b-a)}</td></tr>`).join("")
     + `<tr class="tot"><td>Total</td><td class="num">${COP(r.hoy.renta+r.hoy.salud)}</td><td class="num">${COP(r.pl.renta+r.pl.salud)}</td><td class="num">${COP(r.total)}</td></tr>`;
+
+  /* Secci\u00f3n de reajuste salarial 2027 */
+  const ipc = Math.max(0, Math.min(30, Number($("ipc").value)||0))/100;
+  const smg = Math.max(0, Math.min(30, Number($("smg").value)||0))/100;
+  const gP = g => g>=0.6 ? "m\u00e1s de 60 %" : pct(g);
+  lastEmp = buscarObjetivo(p, r.hoy.disp, smg);
+  $("btn-emp").textContent = `Punto de empate (${gP(lastEmp)})`;
+  if(reajExact !== null) $("reaj").value = Math.min(25, (lastEmp*100)).toFixed(1);
+  const g = reajExact !== null ? lastEmp : (Number($("reaj").value)||0)/100;
+  const m1 = p.m * (1 + g);
+  const sReaj = calc({...p, m:m1, sm:p.sm*(1+smg)},{gr:true,tabla:true,topes:true,salud:true});
+  const dSueldo = (sReaj.ingreso - sReaj.pen) - (r.hoy.ingreso - r.hoy.pen);
+  const dTrib = (sReaj.renta + sReaj.salud) - (r.hoy.renta + r.hoy.salud);
+  const dDisp = sReaj.disp - r.hoy.disp;
+  $("o-reaj-lbl").textContent = pct(g);
+  $("o-reaj-sal").textContent = g>0 ? `Nuevo salario: ${COP(m1)}/mes (+${COP(m1-p.m)}/mes)` : `Salario sin cambio: ${COP(p.m)}/mes`;
+  $("o-rbar-gain").textContent = `+${COPm(dSueldo)} (+${COP(dSueldo/12)}/mes)`;
+  $("o-rbar-tax").textContent = `-${COPm(dTrib)} (-${COP(dTrib/12)}/mes)`;
+  const maxBar = Math.max(dSueldo, dTrib, 1);
+  $("o-rfill-gain").style.width = Math.min(100, Math.max(0, dSueldo/maxBar*100)) + "%";
+  $("o-rfill-tax").style.width = Math.min(100, Math.max(0, dTrib/maxBar*100)) + "%";
+  const vEl = $("o-reaj-verdict");
+  if(Math.abs(dDisp) <= 30000){
+    vEl.className = "verdict even";
+    vEl.innerHTML = `<b>Punto de empate (${pct(g)}):</b> todo su aumento salarial del a\u00f1o (${COPm(dSueldo)}) se destina a pagar el mayor impuesto de renta y aporte a salud. Su ingreso libre en pesos queda igual que antes de la reforma.`;
+  } else if(dDisp < 0){
+    vEl.className = "verdict loss";
+    vEl.innerHTML = g===0
+      ? `<b>Sin reajuste salarial (0 %):</b> la reforma reduce su ingreso libre en <b>${COPm(Math.abs(dDisp))} al a\u00f1o</b> (<b>${COP(Math.abs(dDisp)/12)} menos al mes</b>).`
+      : `<b>El reajuste del ${pct(g)} no alcanza:</b> la reforma absorbe <b>todo</b> su aumento salarial del a\u00f1o y adem\u00e1s reduce su ingreso libre en <b>${COPm(Math.abs(dDisp))} al a\u00f1o</b> (<b>${COP(Math.abs(dDisp)/12)} menos al mes</b> que antes del reajuste).`;
+  } else {
+    vEl.className = "verdict gain";
+    const absorb = dSueldo>0 ? Math.round(dTrib/dSueldo*100) : 0;
+    vEl.innerHTML = `<b>El reajuste del ${pct(g)} alcanza a cubrir la reforma:</b> el <b>${absorb} %</b> de su aumento salarial se destina a los nuevos descuentos de renta y salud, y a usted le queda un aumento libre de <b>${COPm(dDisp)} al a\u00f1o</b> (<b>+${COP(dDisp/12)} al mes</b>).`;
+  }
+  const empReal = buscarObjetivo(p, r.hoy.disp*(1+ipc), smg);
+  const pSin = {...p, grPct:0}, pCon = {...p, grPct: p.grPct>0 ? p.grPct : 50};
+  const eSin = buscarObjetivo(pSin, simular(pSin).hoy.disp, smg), eCon = buscarObjetivo(pCon, simular(pCon).hoy.disp, smg);
+  $("o-pk-hoy").textContent = COPm(r.hoy.disp);
+  $("o-pk-hoy-s").textContent = "\u2248 " + COPm(r.hoy.disp/12) + "/mes (incluidas primas)";
+  $("o-pk-2027").textContent = COPm(sReaj.disp);
+  $("o-pk-2027-s").textContent = "\u2248 " + COPm(sReaj.disp/12) + "/mes (incluidas primas)";
+  const pkBox = $("o-pk-box");
+  pkBox.className = "pocket " + (Math.abs(dDisp)<=30000 ? "" : (dDisp<0 ? "neg" : "pos"));
+  $("o-pk-dif").textContent = (dDisp>=0?"+":"\u2212") + COP(Math.abs(dDisp)/12);
+  $("o-pk-dif-s").textContent = (dDisp>=0?"+":"\u2212") + COPm(Math.abs(dDisp)) + " en el a\u00f1o";
+  $("o-reaj-note").innerHTML = `\ud83d\udccc <strong>\u00bfCu\u00e1nto tendr\u00eda que subir su sueldo en 2027?</strong> Para no recibir menos dinero libre que hoy (empate en pesos), necesitar\u00eda un reajuste salarial de al menos <b>${gP(lastEmp)}</b>. Y si la inflaci\u00f3n es del ${pct(ipc)}, para mantener adem\u00e1s su poder adquisitivo necesitar\u00eda <b>${gP(empReal)}</b>.<br><strong>Seg\u00fan su situaci\u00f3n:</strong> si su universidad <b>no</b> le certifica gastos de representaci\u00f3n, el empate es <b>${gP(eSin)}</b>; si se los certifica (${pCon.grPct} %), es <b>${gP(eCon)}</b>. Los resultados dependen de sus supuestos de inflaci\u00f3n (${pct(ipc)}) y de salario m\u00ednimo (${pct(smg)}).`;
+  const extraSobreAum = Math.max(0, dTrib - r.total);
+  $("o-reaj-steps").innerHTML =
+    `<li><strong>1. Lo que aporta el reajuste salarial:</strong> Al subir su salario un <b>${pct(g)}</b> (de <b>${COP(p.m)}</b> a <b>${COP(m1)}</b> al mes), en los ${p.n.toLocaleString("es-CO")} pagos del a\u00f1o usted recibe <b>+${COPm(sReaj.ingreso-r.hoy.ingreso)}</b> brutos, que tras descontar pensi\u00f3n y FSP equivalen a <b>+${COPm(dSueldo)}</b> al a\u00f1o (<b>+${COP(dSueldo/12)}/mes</b>).</li>` +
+    `<li><strong>2. Por qu\u00e9 el descuento total es de ${COPm(dTrib)}:</strong> En 2027 se juntan dos cobros: <b>${COPm(r.total)}</b> por el cambio de reglas del PL 477 sobre el salario que usted ya ten\u00eda hoy, m\u00e1s <b>${COPm(extraSobreAum)}</b> de impuesto y aporte a salud sobre los nuevos pesos del reajuste salarial.</li>` +
+    `<li><strong>3. Empate en pesos (${gP(lastEmp)}) vs. poder de compra (${gP(empReal)}):</strong> El punto de empate de <b>${gP(lastEmp)}</b> solo iguala los billetes que le quedan libres frente a 2026; pero como el costo de vida sube con la inflaci\u00f3n que usted supone (${pct(ipc)}), para poder comprar lo mismo que hoy necesitar\u00eda un aumento de <b>${gP(empReal)}</b>.</li>`;
+}
+function syncReajBtns(mode){
+  document.querySelectorAll("[data-reaj]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.reaj===mode?"true":"false"));
 }
 function editado(){ $("ex").hidden = true; render(); }
+document.querySelectorAll("[data-sal]").forEach(b=>b.addEventListener("click",()=>{ $("sal").value = Number(b.dataset.sal).toLocaleString("es-CO"); editado(); }));
 document.querySelectorAll("[data-gr]").forEach(b=>b.addEventListener("click",()=>{ grMode=b.dataset.gr; document.querySelectorAll("[data-gr]").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false")); $("gr-otro").hidden = grMode!=="otro"; editado(); }));
+document.querySelectorAll("[data-reaj]").forEach(b=>b.addEventListener("click",()=>{
+  const v = b.dataset.reaj;
+  if(v==="emp"){ reajExact = true; } else { reajExact = null; $("reaj").value = v; }
+  syncReajBtns(v); editado();
+}));
+$("reaj").addEventListener("input",()=>{ reajExact = null; syncReajBtns(""); editado(); });
 ["sal","uvt","sm"].forEach(id=>{ $(id).addEventListener("input",editado); $(id).addEventListener("blur",()=>fmtInput($(id))); });
-["grp","dep","reg","n"].forEach(id=>$(id).addEventListener("input",editado));
+["grp","dep","reg","n","ipc","smg"].forEach(id=>$(id).addEventListener("input",editado));
 $("f").addEventListener("submit",e=>e.preventDefault());
 render();
 </script>
