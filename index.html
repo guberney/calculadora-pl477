@@ -136,6 +136,11 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
           <div class="money"><span>$</span><input id="uvt" inputmode="numeric" value="54.500"></div>
           <p class="hint">Supuesto propio; la DIAN la fija a finales de 2026.</p>
         </div>
+        <div class="field">
+          <label for="sm">Salario m&#237;nimo (SMLMV)</label>
+          <div class="money"><span>$</span><input id="sm" inputmode="numeric" value="1.750.905"></div>
+          <p class="hint">Define los tramos de salud y FSP. Por defecto usa el de 2026.</p>
+        </div>
       </details>
     </form>
   </section>
@@ -171,7 +176,8 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <li><b>Ley actual:</b> los gastos de representaci&#243;n certificados quedan exentos (art. 206, num. 9, ET). Renta exenta del 25 % con tope de 790 UVT, l&#237;mite global del 40 % o 1.340 UVT, 72 UVT por dependiente y la tabla del art. 241 ET.</li>
       <li><b>PL 477:</b> se deroga esa exenci&#243;n (art. 106). Renta exenta del 25 % con tope de 630 UVT, l&#237;mite de 1.180 UVT, sin las 72 UVT por dependiente y una nueva tabla con un tramo del 9 % entre 720 y 1.090 UVT (arts. 47&#8211;49).</li>
       <li><b>Salud:</b> hoy el aporte es del 4 %. Con el proyecto va del 4 % al 8 % seg&#250;n los salarios m&#237;nimos en EPS (art. 21). En los sistemas propios sube 1,5 puntos entre 2 y 3 salarios m&#237;nimos y 2,5 puntos por encima.</li>
-      <li>La deducci&#243;n por dependientes del 10 % (hasta 32 UVT al mes) se aplica en ambos escenarios.</li>
+      <li><b>Descomposici&#243;n vs. tabla:</b> en la barra &#171;De d&#243;nde viene el aumento&#187; el aporte a salud se muestra <i>neto</i> (descontando el menor impuesto de renta que genera al reducir la base gravable); en la tabla &#171;Comparaci&#243;n anual&#187; cada fila muestra su cambio bruto. La suma total es id&#233;ntica.</li>
+      <li>La deducci&#243;n por dependientes del 10 % (hasta 32 UVT al mes, art. 387 ET) se mantiene en ambos escenarios; lo que desaparece son las 72 UVT adicionales por dependiente (art. 336 ET).</li>
     </ul>
   </div>
   <div>
@@ -187,18 +193,18 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
 
 <script>
 /* ===== Motor de c\u00e1lculo (puro) ===== */
-const SM = 1750905;
+const SM_DEF = 1750905;
 function tablaActual(b){ const T=[[31000,.39,10352],[18970,.37,5901],[8670,.35,2296],[4100,.33,788],[1700,.28,116],[1090,.19,0]]; for(const [lo,r,base] of T){ if(b>lo) return (b-lo)*r+base; } return 0; }
 function tablaPL(b){ const T=[[8670,.39,2329],[4100,.33,821],[1700,.28,149],[1090,.19,33],[720,.09,0]]; for(const [lo,r,base] of T){ if(b>lo) return (b-lo)*r+base; } return 0; }
-function saludPL(m, reg){ const x=m/SM;
+function saludPL(m, reg, sm){ const x=m/sm;
   if(reg==="esp"){ return x<=2?.04:(x<=3?.055:.065); }
   for(const [top,r] of [[2,.04],[4,.055],[5,.06],[10,.065],[15,.07],[20,.075],[25,.08]]){ if(x<=top) return r; } return .08; }
-function fsp(m){ const x=m/SM; if(x<4) return 0; if(x<16) return .01; return Math.min(.02, .012 + .002*Math.floor(x-16)); }
+function fsp(m, sm){ const x=m/sm; if(x<4) return 0; if(x<16) return .01; return Math.min(.02, .012 + .002*Math.floor(x-16)); }
 function calc(p, f){ // f: {gr, tabla, topes, salud} true = regla del PL
-  const {m, n, uvt, grPct, dep, reg} = p;
+  const {m, n, uvt, sm, grPct, dep, reg} = p;
   const I = n*m, meses = Math.min(n, 12.5);
-  const s = f.salud ? saludPL(m, reg) : .04;
-  const aportes = (s + .04 + fsp(m)) * m * meses;
+  const s = f.salud ? saludPL(m, reg, sm) : .04;
+  const aportes = (s + .04 + fsp(m, sm)) * m * meses;
   const base = I - aportes;
   const G = f.gr ? 0 : Math.min(grPct/100 * m * 12, base);
   const depded = dep>0 ? Math.min(.10*I, 384*uvt) : 0;
@@ -230,9 +236,10 @@ let grMode = "50";
 function fmtInput(el){ const v=num(el.value); el.value = v ? v.toLocaleString("es-CO") : ""; }
 function leer(){
   const grPct = grMode==="otro" ? Math.max(0, Math.min(50, Number($("grp").value)||0)) : Number(grMode);
-  return { m:num($("sal").value), n:Math.max(12, Math.min(16, Number($("n").value)||13.5)), uvt:num($("uvt").value)||54500, grPct, dep:Number($("dep").value), reg:$("reg").value };
+  const uvtRaw = num($("uvt").value), smRaw = num($("sm").value);
+  return { m:num($("sal").value), n:Math.max(12, Math.min(16, Number($("n").value)||13.5)), uvt:uvtRaw>=10000?uvtRaw:54500, sm:smRaw>=500000?smRaw:SM_DEF, grPct, dep:Number($("dep").value), reg:$("reg").value };
 }
-const COMP = [["exencion","Fin de la exenci\u00f3n de gastos de representaci\u00f3n","--c1"],["tabla","Nueva tabla de renta (tramo del 9 %)","--c2"],["topes","Topes m\u00e1s bajos y fin de las 72 UVT por dependiente","--c3"],["salud","Mayor aporte a salud (neto)","--c4"]];
+const COMP = [["exencion","Fin de la exenci\u00f3n de gastos de representaci\u00f3n","--c1"],["tabla","Nueva tabla de renta (tramo del 9 %)","--c2"],["topes","Topes m\u00e1s bajos y fin de las 72 UVT por dependiente","--c3"],["salud","Mayor aporte a salud (neto de renta)","--c4"]];
 function render(){
   const p = leer();
   if(p.m < 500000){ $("o-anual").textContent="\u2014"; $("o-mes").textContent="\u2014"; $("o-pct").textContent="\u2014"; $("o-meses").textContent=""; $("o-frase").textContent="Escriba su salario mensual para ver el resultado."; $("o-tab").innerHTML=""; $("o-stack").innerHTML=""; $("o-leg").innerHTML=""; return; }
@@ -245,13 +252,14 @@ function render(){
   const pos = COMP.map(([k,t,c])=>[k,t,c,Math.max(0,r.comp[k])]); const sum = pos.reduce((a,x)=>a+x[3],0)||1;
   $("o-stack").innerHTML = pos.filter(x=>x[3]>0).map(([k,t,c,v])=>`<div title="${t}" style="width:${v/sum*100}%;background:var(${c})"></div>`).join("");
   $("o-leg").innerHTML = COMP.map(([k,t,c])=>`<span><i style="background:var(${c})"></i>${t}<b>${COPm(r.comp[k])}</b></span>`).join("");
-  const rows = [["Impuesto de renta",r.hoy.renta,r.pl.renta],[`Aporte a salud (${pct(.04)} \u2192 ${pct(r.pl.tasaSalud)})`,r.hoy.salud,r.pl.salud]];
+  const rows = [["Impuesto de renta",r.hoy.renta,r.pl.renta],[`Aporte a salud bruto (${pct(.04)} \u2192 ${pct(r.pl.tasaSalud)})`,r.hoy.salud,r.pl.salud]];
   $("o-tab").innerHTML = rows.map(([t,a,b])=>`<tr><td>${t}</td><td class="num">${COP(a)}</td><td class="num">${COP(b)}</td><td class="num">${COP(b-a)}</td></tr>`).join("")
     + `<tr class="tot"><td>Total</td><td class="num">${COP(r.hoy.renta+r.hoy.salud)}</td><td class="num">${COP(r.pl.renta+r.pl.salud)}</td><td class="num">${COP(r.total)}</td></tr>`;
 }
-document.querySelectorAll("[data-gr]").forEach(b=>b.addEventListener("click",()=>{ grMode=b.dataset.gr; document.querySelectorAll("[data-gr]").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false")); $("gr-otro").hidden = grMode!=="otro"; render(); }));
-["sal","uvt"].forEach(id=>{ $(id).addEventListener("input",render); $(id).addEventListener("blur",()=>fmtInput($(id))); });
-["grp","dep","reg","n"].forEach(id=>$(id).addEventListener("input",render));
+function editado(){ $("ex").hidden = true; render(); }
+document.querySelectorAll("[data-gr]").forEach(b=>b.addEventListener("click",()=>{ grMode=b.dataset.gr; document.querySelectorAll("[data-gr]").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false")); $("gr-otro").hidden = grMode!=="otro"; editado(); }));
+["sal","uvt","sm"].forEach(id=>{ $(id).addEventListener("input",editado); $(id).addEventListener("blur",()=>fmtInput($(id))); });
+["grp","dep","reg","n"].forEach(id=>$(id).addEventListener("input",editado));
 $("f").addEventListener("submit",e=>e.preventDefault());
 render();
 </script>
